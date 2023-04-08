@@ -1,0 +1,15 @@
+{
+  "name": "relayer",
+  "version": "1.0.0",
+  "description": "A server that pairs incoming sockets and forwards data between them",
+  "main": "relayer.js",
+  "author": "Francisco Jordano <francisco@jordano.es>",
+  "license": "MPL-2.0",
+  "dependencies": {
+    "net": "^1.0.2"
+  },
+  "scripts": {
+    "start": "node relayer.js"
+  }
+}
+
