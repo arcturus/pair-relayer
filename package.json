@@ -1,12 +1,17 @@
 {
   "name": "relayer",
   "version": "1.0.0",
-  "description": "A server that pairs incoming sockets and forwards data between them",
-  "main": "relayer.js",
-  "author": "Francisco Jordano <francisco@jordano.es>",
-  "license": "MPL-2.0",
+  "description": "Node.js server that listens for incoming connections and forwards data between them",
+  "main": "index.js",
+  "dependencies": {
+    "winston": "^3.3.3"
+  },
   "scripts": {
     "start": "node relayer.js"
-  }
+  },
+  "author": {
+    "name": "Francisco Jordano",
+    "email": "francisco@jordano.es"
+  },
+  "license": "MPL-2.0"
 }
-

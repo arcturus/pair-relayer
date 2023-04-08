@@ -1,58 +1,66 @@
-/*
- * Author: Francisco Jordano <francisco@jordano.es>
- * License: MPL 2.0
- */
-
 const net = require('net');
+const winston = require('winston');
 
-const socketPairs = [];
-
-const port = process.env.PORT || 3000;
-
-const server = net.createServer((socket) => {
-  if (socketPairs.length === 0 || socketPairs[socketPairs.length - 1].length === 2) {
-    // Create a new socket pair
-    const newPair = [socket];
-    socketPairs.push(newPair);
-  } else {
-    // Forward data between the last pair and the new socket
-    const lastPair = socketPairs[socketPairs.length - 1];
-    lastPair.push(socket);
-    forwardData(lastPair);
-  }
-
-  socket.on('end', () => {
-    const pair = getPair(socket);
-    if (pair) {
-      // Close the other socket before removing the pair
-      const otherSocket = getOtherSocket(pair, socket);
-      if (otherSocket) {
-        otherSocket.end();
-      }
-      // Remove the socket pair
-      socketPairs.splice(socketPairs.indexOf(pair), 1);
-    }
-  });
-
-  socket.on('error', (err) => {
-    console.error(`Socket error: ${err}`);
-  });
+// Set up logging
+const logger = winston.createLogger({
+  level: 'info',
+  format: winston.format.combine(
+    winston.format.timestamp(),
+    winston.format.errors({ stack: true }),
+    winston.format.splat(),
+    winston.format.json()
+  ),
+  defaultMeta: { service: 'relayer' },
+  transports: [
+    new winston.transports.Console({
+      format: winston.format.combine(
+        winston.format.colorize(),
+        winston.format.printf(({ level, message, label, timestamp }) => {
+          return `${timestamp} [${label}] ${level}: ${message}`;
+        })
+      ),
+    }),
+  ],
 });
 
-function getPair(socket) {
-  return socketPairs.find((pair) => pair.includes(socket));
-}
+// List of open pairs of sockets
+const socketsPair = [];
 
-function getOtherSocket(pair, socket) {
-  return pair.find((s) => s !== socket);
-}
+// Create server and listen to connections
+const server = net.createServer((socket) => {
+  logger.info('New incoming connection');
 
-function forwardData(pair) {
-  const [socket1, socket2] = pair;
-  socket1.pipe(socket2);
-  socket2.pipe(socket1);
-}
+  const otherSocket = socketsPair.pop();
 
-server.listen(port, () => {
-  console.log(`Server listening on port ${port}`);
+  if (otherSocket) {
+    logger.debug('Pairing incoming connection with existing connection');
+    socket.on('end', () => {
+      if (otherSocket) {
+        otherSocket.end();
+        logger.debug('Closing other socket');
+      }
+    });
+    otherSocket.pipe(socket).pipe(otherSocket);
+    logger.debug('Forwarding data between sockets');
+
+  } else {
+    logger.debug('No other connections to pair with');
+    socketsPair.push(socket);
+  }
+});
+
+server.listen(process.env.PORT || 3000, () => {
+  logger.info(`Listening on port ${server.address().port}`);
+});
+
+server.on('error', (err) => {
+  logger.error(`Server error: ${err}`);
+});
+
+process.on('SIGINT', () => {
+  logger.info('Shutting down server');
+  server.close(() => {
+    logger.info('Server shut down successfully');
+    process.exit();
+  });
 });
