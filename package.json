@@ -7,8 +7,8 @@
     "winston": "^3.3.3"
   },
   "scripts": {
-    "start": "node relayer.js",
-    "debug": "DEBUG=true node relayer.js"
+    "start": "node pair-relayer.js",
+    "debug": "DEBUG=true node pair-relayer.js"
   },
   "author": {
     "name": "Francisco Jordano",
