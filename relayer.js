@@ -7,6 +7,8 @@ const net = require('net');
 
 const socketPairs = [];
 
+const port = process.env.PORT || 3000;
+
 const server = net.createServer((socket) => {
   if (socketPairs.length === 0 || socketPairs[socketPairs.length - 1].length === 2) {
     // Create a new socket pair
@@ -51,6 +53,6 @@ function forwardData(pair) {
   socket2.pipe(socket1);
 }
 
-server.listen(3000, () => {
-  console.log('Server listening on port 3000');
+server.listen(port, () => {
+  console.log(`Server listening on port ${port}`);
 });
