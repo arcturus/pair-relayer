@@ -1,27 +1,5 @@
 const net = require('net');
-const winston = require('winston');
-
-// Set up logging
-const logger = winston.createLogger({
-  level: 'info',
-  format: winston.format.combine(
-    winston.format.timestamp(),
-    winston.format.errors({ stack: true }),
-    winston.format.splat(),
-    winston.format.json()
-  ),
-  defaultMeta: { service: 'relayer' },
-  transports: [
-    new winston.transports.Console({
-      format: winston.format.combine(
-        winston.format.colorize(),
-        winston.format.printf(({ level, message, label, timestamp }) => {
-          return `${timestamp} [${label}] ${level}: ${message}`;
-        })
-      ),
-    }),
-  ],
-});
+const logger = require('./logger');
 
 // List of open pairs of sockets
 const socketsPair = [];
