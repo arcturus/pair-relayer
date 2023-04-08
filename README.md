@@ -228,7 +228,5 @@ server.listen(3000, () => {
 * It failed in their first intent.
 * I had to do a code review (and testing) to provide instructions to fix the problems.
 * Those intructions provided a valid solution.
-* It felt like doing a code review :).
-
 
 From now on, I'll continue changing this code through prompts, that will be added to the different commit messages.
