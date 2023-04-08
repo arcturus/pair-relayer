@@ -1,4 +1,4 @@
-# relayer
+# pair-relayer
 Simple (and insecure) way of relaying data between two machines connected to this server.
 
 This server will admit multiple connections but will get pair of sockets and pipe the data from each other.

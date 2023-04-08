@@ -1,5 +1,5 @@
 {
-  "name": "relayer",
+  "name": "pair-relayer",
   "version": "1.0.0",
   "description": "Node.js server that listens for incoming connections and forwards data between them",
   "main": "index.js",
