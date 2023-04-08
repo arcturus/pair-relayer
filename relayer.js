@@ -1,3 +1,8 @@
+/*
+ * Author: Francisco Jordano <francisco@jordano.es>
+ * License: MPL 2.0
+ */
+
 const net = require('net');
 
 const socketPairs = [];
